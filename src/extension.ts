@@ -3,7 +3,7 @@ import { DocumentCache, isXmlDocument } from './documentCache';
 import { StructureTreeProvider, TreeEntry, isXmlNode } from './structureTree';
 import { IiqDefinitionProvider, IiqDocumentSymbolProvider, IiqHoverProvider, findObjectDefinitions } from './providers';
 import { XmlNode, nodePath, walk, getAttr } from './parser/xmlParser';
-import { getReference } from './iiq/knowledge';
+import { getNavigableReference } from './iiq/knowledge';
 import { WorkflowPanel } from './workflow/workflowPanel';
 import { findWorkflows } from './workflow/workflowModel';
 
@@ -191,9 +191,11 @@ export function activate(context: vscode.ExtensionContext): void {
     }),
 
     vscode.commands.registerCommand('iiqXmlExplorer.goToReference', async (entry?: TreeEntry) => {
-      const node = entry ?? view.selection[0];
+      const picked = entry ?? view.selection[0];
+      // On an attribute row, use the element it belongs to.
+      const node = picked?.kind === 'attribute' ? picked.parent : picked;
       if (!node || !isXmlNode(node)) { return; }
-      const ref = getReference(node);
+      const ref = getNavigableReference(node);
       if (!ref) {
         vscode.window.showInformationMessage('This node does not reference another IdentityIQ object.');
         return;

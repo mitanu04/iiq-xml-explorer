@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { XmlNode, findNodeAt, getAttr } from './parser/xmlParser';
 import { DocumentCache } from './documentCache';
-import { IIQ_OBJECT_TYPES, TAG_DOCS, getReference, isIiqDocument } from './iiq/knowledge';
+import { IIQ_OBJECT_TYPES, TAG_DOCS, getNavigableReference, getReference, isIiqDocument } from './iiq/knowledge';
 import { labelFor } from './presentation';
 
 function symbolKind(node: XmlNode): vscode.SymbolKind {
@@ -96,7 +96,7 @@ export class IiqDefinitionProvider implements vscode.DefinitionProvider {
     if (!isIiqDocument(model)) { return undefined; }
     const node = findNodeAt(model.nodes, document.offsetAt(position));
     if (!node || node.kind !== 'element' || document.offsetAt(position) > node.openTagEnd) { return undefined; }
-    const ref = getReference(node);
+    const ref = getNavigableReference(node);
     if (!ref) { return undefined; }
     return findObjectDefinitions(ref.type, ref.name, this.cache);
   }

@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { XmlAttribute, XmlDocumentModel, XmlNode, XmlParseProblem } from './parser/xmlParser';
 import { DocumentCache, isXmlDocument } from './documentCache';
-import { getReference, isIiqDocument } from './iiq/knowledge';
+import { getNavigableReference, isIiqDocument } from './iiq/knowledge';
 import { descriptionFor, iconFor, labelFor, tooltipFor } from './presentation';
 
 /** Must match the default of `iiqXmlExplorer.previewAttributes` in package.json. */
@@ -121,7 +121,8 @@ export class StructureTreeProvider implements vscode.TreeDataProvider<TreeEntry>
       md.appendMarkdown(`**@${attr.name}** of \`<${parent.name}>\`\n\n`);
       md.appendCodeblock(attr.value, 'text');
       item.tooltip = md;
-      item.contextValue = 'attribute';
+      // Attributes of a reference (e.g. its name) also offer "Go to Referenced Object".
+      item.contextValue = getNavigableReference(parent) ? 'attributeReference' : 'attribute';
       item.command = { command: 'iiqXmlExplorer.reveal', title: 'Reveal', arguments: [{ start: attr.start, end: attr.end }] };
       return item;
     }
@@ -139,7 +140,7 @@ export class StructureTreeProvider implements vscode.TreeDataProvider<TreeEntry>
     item.description = descriptionFor(entry, keys, showAttributes);
     item.iconPath = iconFor(entry);
     item.tooltip = tooltipFor(entry, doc);
-    item.contextValue = getReference(entry) ? 'reference'
+    item.contextValue = getNavigableReference(entry) ? 'reference'
       : (entry.kind === 'element' && entry.name === 'Workflow') ? 'workflow' : entry.kind;
     item.command = { command: 'iiqXmlExplorer.reveal', title: 'Reveal', arguments: [entry] };
     return item;
