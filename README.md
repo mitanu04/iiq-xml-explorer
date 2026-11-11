@@ -168,26 +168,33 @@ Available from the Command Palette (**Ctrl+Shift+P**), all starting with `IIQ XM
 
 ## Build locally
 
+You can build with **npm** (comes with Node.js) or with **Yarn**. Both give the same `.vsix`; use whichever you prefer.
+
 ### Prerequisites
 
 | Tool | Version | Check with |
 |---|---|---|
 | [Node.js](https://nodejs.org) (includes npm) | 20 LTS or newer | `node -v` |
+| [Yarn](https://classic.yarnpkg.com) (optional, only if you use Yarn) | 1.22 or newer | `yarn -v` |
 | Git | any recent | `git --version` |
 | VS Code | 1.85 or newer, to install and debug | `code --version` |
 
-Nothing has to be installed globally: the TypeScript compiler and the packaging tool (`@vscode/vsce`)
-are development dependencies of the project and are downloaded by `npm install`.
+To get Yarn: `npm install -g yarn`, or `corepack enable` (Corepack comes with Node.js).
+Nothing else has to be installed globally: the TypeScript compiler and the packaging tool (`@vscode/vsce`)
+are development dependencies of the project and are downloaded by the install step.
 
 ### Build the .vsix
 
 ```bash
 git clone https://github.com/<your-user>/iiq-xml-explorer.git
 cd iiq-xml-explorer
-npm install          # first time, and after package.json changes: downloads node_modules/
-npm test             # optional: compiles and runs the unit tests
-npm run package      # compiles into out/ and creates iiq-xml-explorer-<version>.vsix
 ```
+
+| Step | npm | Yarn |
+|---|---|---|
+| 1. Download dependencies into `node_modules/` (first time, and after `package.json` changes) | `npm install` | `yarn install` |
+| 2. Optional: compile and run the unit tests | `npm test` | `yarn test` |
+| 3. Compile into `out/` and create `iiq-xml-explorer-<version>.vsix` | `npm run package` | `yarn package` |
 
 The `.vsix` is created in the project folder. Install it with
 
@@ -199,38 +206,40 @@ then run **Developer: Reload Window** in VS Code.
 
 `node_modules/`, `out/` and `*.vsix` are generated and are ignored by Git; delete them any time and rebuild.
 
-### npm scripts
+### Scripts
 
-| Command | What it does |
-|---|---|
-| `npm install` | Downloads the dependencies into `node_modules/` |
-| `npm run compile` | Compiles `src/` (TypeScript) into `out/` (JavaScript) |
-| `npm run watch` | Same, and recompiles on every save |
-| `npm test` | Compiles, then runs the unit tests (XML parser, IIQ reference detection, workflow model, tree labels and icons) |
-| `npm run package` | Compiles and creates `iiq-xml-explorer-<version>.vsix` |
+| npm | Yarn | What it does |
+|---|---|---|
+| `npm install` | `yarn install` | Downloads the dependencies into `node_modules/` |
+| `npm run compile` | `yarn compile` | Compiles `src/` (TypeScript) into `out/` (JavaScript) |
+| `npm run watch` | `yarn watch` | Same, and recompiles on every save |
+| `npm test` | `yarn test` | Compiles, then runs the unit tests (XML parser, IIQ reference detection, workflow model, tree labels and icons) |
+| `npm run package` | `yarn package` | Compiles and creates `iiq-xml-explorer-<version>.vsix` |
+
+### npm or Yarn: what to know
+
+- The repository keeps **`package-lock.json`** (npm's lockfile); the GitHub build uses it. When you build with Yarn,
+  a local `yarn.lock` is created; it is ignored by Git, so don't commit it.
+- **Yarn 2 or newer** ("Berry") doesn't create `node_modules/` by default, and the packaging tool needs it.
+  Add a `.yarnrc.yml` file with the line `nodeLinker: node-modules`, or use Yarn 1.
+- Yarn 1 may warn *"package-lock.json found"* when installing. The warning is harmless.
 
 ### Run and debug without installing
 
-1. Open the project folder in VS Code and run `npm install` once.
+1. Open the project folder in VS Code and install the dependencies once (`npm install` or `yarn install`).
 2. Press **F5** (*Run Extension*). It compiles the code and opens an **Extension Development Host** window
    with the extension loaded and the `samples/` folder open.
-3. After changing code, run `npm run watch` (or press F5 again) and reload the host window with
+3. After changing code, run `npm run watch` or `yarn watch` (or press F5 again) and reload the host window with
    **Ctrl+R** (*Developer: Reload Window*). Breakpoints in `src/*.ts` work in the main window.
-
-### Releasing a new version
-
-1. Raise the version: `npm version patch --no-git-tag-version` (or `minor` / `major`).
-   This updates `package.json` and `package-lock.json` together.
-2. Add the changes to `CHANGELOG.md` and update the version in the install command above.
-3. Build with `npm run package`, or let GitHub build it (next section).
 
 ### Troubleshooting
 
 - **`code` is not recognized**: in VS Code run **Shell Command: Install 'code' command in PATH** (macOS),
   or re-run the Windows installer with *Add to PATH*. You can always use *Extensions* → `…` → *Install from VSIX…* instead.
-- **PowerShell: "running scripts is disabled on this system"** when calling `npm`: use *Command Prompt*,
+- **PowerShell: "running scripts is disabled on this system"** when calling `npm` or `yarn`: use *Command Prompt*,
   or run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once.
-- **Compile errors after pulling changes**: run `npm install` again; a dependency may have changed.
+- **`yarn` is not recognized**: install it with `npm install -g yarn` (or `corepack enable`), then open a new terminal.
+- **Compile errors after pulling changes**: run the install step again; a dependency may have changed.
 - **The extension doesn't change after installing a new build**: check the `version` in `package.json` was raised,
   then reload the window.
 
@@ -248,18 +257,66 @@ The workflow in `.github/workflows/build.yml` builds the extension on GitHub, so
 GitHub delivers artifacts zipped, so unzip it to get the `.vsix`. Artifacts are kept for 30 days;
 releases are kept until you delete them.
 
-**Publish a release**:
+**Publish a release**: see [Create a new release](#create-a-new-release).
+
+## Create a new release
+
+The GitHub workflow creates the release automatically when a **version tag** (such as `v0.4.3`) reaches GitHub.
+With a branch → pull request flow, it goes like this.
+
+### 1. Raise the version on a branch
+
+Skip this step if you are releasing the current version for the first time.
 
 ```bash
-npm version patch --no-git-tag-version   # e.g. 0.4.2 → 0.4.3
-git commit -am "Release 0.4.3"
-git tag v0.4.3
-git push origin main v0.4.3
+git switch main
+git pull
+git switch -c release-0.4.3
+npm version patch --no-git-tag-version     # or: yarn version --patch --no-git-tag-version
 ```
 
-The tag must match the `version` in `package.json`; otherwise the build stops with an error saying which version to use.
-If the release step fails with a permissions error, open the repository's *Settings → Actions → General* and set
-*Workflow permissions* to **Read and write permissions**.
+Use `minor` or `major` instead of `patch` for bigger changes. Then add a `## 0.4.3` entry to `CHANGELOG.md`
+and update the version in the install command at the top of this README.
+
+```bash
+git add .
+git commit -m "Release 0.4.3"
+git push -u origin release-0.4.3
+```
+
+### 2. Open a pull request and merge it
+
+Open the pull request on GitHub. The build runs on it, so you can see it pass before merging.
+
+### 3. Tag the merged commit and push the tag
+
+```bash
+git switch main
+git pull
+git tag v0.4.3
+git push origin v0.4.3
+```
+
+The tag must match the `version` in `package.json`: `v0.4.3` ↔ `0.4.3`.
+
+### 4. Check the result on GitHub
+
+- **Actions** tab: the run shows **build**, then **release**; both should turn green.
+- **Releases** page (right side of the repository's main page): **IIQ XML Explorer 0.4.3**,
+  with `iiq-xml-explorer-0.4.3.vsix` attached and notes listing the changes since the previous release.
+
+### If something goes wrong
+
+- **The tag doesn't match the version**: the build stops at *Check the tag matches package.json*.
+  Delete the tag, fix the version, and tag again:
+  ```bash
+  git push origin --delete v0.4.3
+  git tag -d v0.4.3
+  ```
+- **The release job fails with a permissions error**: open *Settings → Actions → General → Workflow permissions*,
+  select **Read and write permissions**, save, then click **Re-run all jobs** on the run.
+- **Don't create the release with GitHub's "Draft a new release" button.** That button also creates the tag,
+  which starts the workflow, and the workflow then fails because the release already exists. Push the tag from the terminal instead.
 
 ## Author
 

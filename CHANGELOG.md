@@ -11,6 +11,9 @@
 - README: step-by-step local build guide (prerequisites, npm scripts, debugging with F5, releasing, troubleshooting)
   and a section on building with GitHub.
 - `npm run package` no longer stops to ask about the missing repository field.
+- Build with npm or Yarn: scripts no longer call npm internally, Yarn files are ignored by Git, and the README
+  shows every build step for both.
+- README: new "Create a new release" section with the full branch → pull request → tag procedure.
 - Unit tests extended from 10 to 68: XML parser edge cases, IIQ file and reference detection,
   workflow model edge cases, and the tree's labels, entry values and icons.
 
