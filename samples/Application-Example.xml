@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE sailpoint PUBLIC "sailpoint.dtd" "sailpoint.dtd">
+<sailpoint>
+  <Application connector="sailpoint.connector.DelimitedFileConnector" featuresString="DIRECT_PERMISSIONS, NO_RANDOM_ACCESS" name="HR Feed" profileClass="" type="DelimitedFile">
+    <AccountCorrelationConfig>
+      <Reference class="sailpoint.object.CorrelationConfig" name="HR Feed Correlation Config"/>
+    </AccountCorrelationConfig>
+    <Attributes>
+      <Map>
+        <entry key="afterProvisioningRule"/>
+        <entry key="columnNames">
+          <value>
+            <List>
+              <String>employeeId</String>
+              <String>name</String>
+              <String>email</String>
+              <String>department</String>
+            </List>
+          </value>
+        </entry>
+        <entry key="delimiter" value=","/>
+        <entry key="file" value="/data/hr/employees.csv"/>
+        <entry key="hasHeader">
+          <value>
+            <Boolean>true</Boolean>
+          </value>
+        </entry>
+        <entry key="mergeRows">
+          <value>
+            <Boolean>false</Boolean>
+          </value>
+        </entry>
+      </Map>
+    </Attributes>
+    <BuildMapRule>
+      <Reference class="sailpoint.object.Rule" name="Example - BuildMap Normalize"/>
+    </BuildMapRule>
+    <Owner>
+      <Reference class="sailpoint.object.Identity" name="spadmin"/>
+    </Owner>
+    <Remediators>
+      <Reference class="sailpoint.object.Identity" name="IAM Team"/>
+    </Remediators>
+    <Schemas>
+      <Schema displayAttribute="name" identityAttribute="employeeId" nativeObjectType="account" objectType="account">
+        <AttributeDefinition name="employeeId" type="string"/>
+        <AttributeDefinition name="name" type="string"/>
+        <AttributeDefinition name="email" type="string"/>
+        <AttributeDefinition name="department" type="string"/>
+      </Schema>
+    </Schemas>
+  </Application>
+  <!-- A second object in the same import file -->
+  <Rule language="beanshell" name="Example - HR Correlation" type="Correlation">
+    <Source><![CDATA[
+Map result = new HashMap();
+result.put("identityAttributeName", "employeeId");
+result.put("identityAttributeValue", account.getAttribute("employeeId"));
+return result;
+]]></Source>
+  </Rule>
+</sailpoint>

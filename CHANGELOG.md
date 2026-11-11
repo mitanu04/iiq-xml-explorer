@@ -1,0 +1,55 @@
+# Changelog
+
+## 0.4.2
+- GitHub Actions workflow: builds, tests and packages the extension on every push and pull request,
+  uploads the .vsix as an artifact, and creates a GitHub Release for version tags (`v*`).
+- README: step-by-step local build guide (prerequisites, npm scripts, debugging with F5, releasing, troubleshooting)
+  and a section on building with GitHub.
+- `npm run package` no longer stops to ask about the missing repository field.
+
+## 0.4.1
+- Ctrl+Alt+X is now **Show IIQ Structure**: it brings the view into sight and focuses it wherever it is. It no longer hides the right side bar, so tools there (such as Copilot Chat) are never hidden by surprise. Use Ctrl+Alt+B to hide or show the right side bar.
+- The first-run prompt now says which option to pick ("New Secondary Side Bar Entry").
+- README rewritten: requirements, install and upgrade steps, every toolbar button and menu item, how diagram steps are detected, which files count as IdentityIQ XML, layout options, commands and shortcuts, samples and known limitations.
+- Clearer setting descriptions.
+
+## 0.4.0
+- Workflow Diagram: clicking a step or transition now jumps to it in the XML (an invisible layer was blocking clicks).
+- Workflow Diagram: transition conditions are shown in full, wrapped over several lines; steps are spaced so labels fit and labels avoid step boxes. Toolbar switch for Full / Short conditions.
+- Workflow Diagram: large workflows open at a readable zoom starting from the Start step.
+- One-time offer to move IIQ Structure to the right side bar (full height); Ctrl+Alt+X shortcut (changed in 0.4.1).
+
+## 0.3.4
+- The IIQ Structure view starts larger in the Explorer.
+- New command to move the view to the Secondary Side Bar (full height, files stay visible).
+
+## 0.3.3
+- Updated extension description (author, attribute view, workflow flowcharts).
+
+## 0.3.2
+- Publisher id changed to `mergea-sergiu-octavian` (extension id `mergea-sergiu-octavian.iiq-xml-explorer`). Uninstall the older `mihai-dev.iiq-xml-explorer` once.
+
+## 0.3.1
+- Author credit: built by Mergea Sergiu-Octavian.
+
+## 0.3.0
+- Workflow Diagram: renders a Workflow as a flowchart in a webview, with IIQ positions or automatic layout, click-to-jump, cursor highlight, live updates and warnings for missing/unreachable steps.
+
+## 0.2.1
+- Person icon for everything that references an identity or workgroup (Owner, Remediators, Approvers, Identity references...).
+- AccountCorrelationConfig uses the same icon as Attributes/Map.
+
+## 0.2.0
+- Every attribute of a tag is listed as a child node (no more hidden "+N attr").
+- `<entry>` values shown for nested values, string lists, maps and empty entries.
+- New Copy Value command; Copy Path works on attributes (`.../@name`).
+
+## 0.1.1
+- The structure view now lives in the Explorer sidebar (under the file tree) instead of its own Activity Bar tab, so files stay visible.
+
+## 0.1.0
+- Structure tree view with attribute preview, IIQ icons, tooltips and follow-cursor.
+- Tag Index quick pick.
+- Reference detection and go-to-definition across workspace XML files.
+- Outline/breadcrumbs and hovers for IdentityIQ XML.
+- Copy Path and Select Whole Element commands.

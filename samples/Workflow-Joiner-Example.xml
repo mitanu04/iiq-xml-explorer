@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE Workflow PUBLIC "sailpoint.dtd" "sailpoint.dtd">
+<Workflow explicitTransitions="true" name="Example - Joiner" type="IdentityLifecycle">
+  <Description>Sample joiner workflow used to try out IIQ XML Explorer.</Description>
+  <RuleLibraries>
+    <Reference class="sailpoint.object.Rule" name="Example Rule Library"/>
+  </RuleLibraries>
+  <Variable input="true" name="identityName">
+    <Description>Name of the identity that joined.</Description>
+  </Variable>
+  <Variable initializer="false" name="trace"/>
+  <Variable name="plan"/>
+  <Step icon="Start" name="Start" posX="20" posY="20">
+    <Transition to="Build Plan"/>
+  </Step>
+  <Step action="rule:Example - Joiner Helper" name="Build Plan" posX="150" posY="20" resultVariable="plan">
+    <Arg name="identityName" value="ref:identityName"/>
+    <Transition to="Notify Manager" when="script:(plan != null &amp;&amp; !plan.isEmpty())"/>
+    <Transition to="Stop"/>
+  </Step>
+  <Step name="Notify Manager" posX="300" posY="20">
+    <Script>
+      <Source><![CDATA[
+import sailpoint.object.Identity;
+Identity id = context.getObjectByName(Identity.class, identityName);
+log.debug("Joiner for " + id.getDisplayName());
+]]></Source>
+    </Script>
+    <Transition to="Stop"/>
+  </Step>
+  <Step icon="Stop" name="Stop" posX="450" posY="20"/>
+</Workflow>

@@ -1,0 +1,301 @@
+{
+  "name": "iiq-xml-explorer",
+  "displayName": "IIQ XML Explorer",
+  "description": "SailPoint IdentityIQ XML explorer by Mergea Sergiu-Octavian: tag tree with all attributes and entry values, BeanShell sources, references, outline, hovers and workflow flowcharts.",
+  "version": "0.4.2",
+  "publisher": "mergea-sergiu-octavian",
+  "author": {
+    "name": "Mergea Sergiu-Octavian"
+  },
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Visualization",
+    "Other"
+  ],
+  "keywords": [
+    "beanshell",
+    "diagram",
+    "flowchart",
+    "identityiq",
+    "iiq",
+    "sailpoint",
+    "workflow",
+    "xml"
+  ],
+  "activationEvents": [
+    "onLanguage:xml"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "views": {
+      "explorer": [
+        {
+          "id": "iiqXmlExplorer.structure",
+          "name": "IIQ Structure",
+          "contextualTitle": "IIQ XML Explorer",
+          "icon": "media/activity.svg",
+          "initialSize": 3
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "iiqXmlExplorer.structure",
+        "contents": "Open an IdentityIQ XML file (Rule, Workflow, Application, TaskDefinition...) to see its structure here."
+      }
+    ],
+    "commands": [
+      {
+        "command": "iiqXmlExplorer.refresh",
+        "title": "Refresh",
+        "category": "IIQ XML",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "iiqXmlExplorer.showTagIndex",
+        "title": "Show Tag Index",
+        "category": "IIQ XML",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "iiqXmlExplorer.toggleFollowCursor",
+        "title": "Toggle Follow Cursor",
+        "category": "IIQ XML",
+        "icon": "$(target)"
+      },
+      {
+        "command": "iiqXmlExplorer.toggleAttributes",
+        "title": "Toggle Attribute Preview",
+        "category": "IIQ XML",
+        "icon": "$(symbol-property)"
+      },
+      {
+        "command": "iiqXmlExplorer.reveal",
+        "title": "Reveal in Editor",
+        "category": "IIQ XML"
+      },
+      {
+        "command": "iiqXmlExplorer.goToReference",
+        "title": "Go to Referenced Object",
+        "category": "IIQ XML",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "iiqXmlExplorer.copyPath",
+        "title": "Copy Path",
+        "category": "IIQ XML"
+      },
+      {
+        "command": "iiqXmlExplorer.selectNode",
+        "title": "Select Whole Element",
+        "category": "IIQ XML"
+      },
+      {
+        "command": "iiqXmlExplorer.copyValue",
+        "title": "Copy Value",
+        "category": "IIQ XML"
+      },
+      {
+        "command": "iiqXmlExplorer.showWorkflowDiagram",
+        "title": "Show Workflow Diagram",
+        "category": "IIQ XML",
+        "icon": "$(type-hierarchy)"
+      },
+      {
+        "command": "iiqXmlExplorer.moveToSideBar",
+        "title": "Move IIQ Structure to the Right Side Bar…",
+        "category": "IIQ XML",
+        "icon": "$(layout-sidebar-right)"
+      },
+      {
+        "command": "iiqXmlExplorer.showStructure",
+        "title": "Show IIQ Structure",
+        "category": "IIQ XML",
+        "icon": "$(list-tree)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "iiqXmlExplorer.showWorkflowDiagram",
+          "when": "view == iiqXmlExplorer.structure && iiqXmlExplorer.isWorkflow",
+          "group": "navigation@0"
+        },
+        {
+          "command": "iiqXmlExplorer.showTagIndex",
+          "when": "view == iiqXmlExplorer.structure",
+          "group": "navigation@1"
+        },
+        {
+          "command": "iiqXmlExplorer.toggleFollowCursor",
+          "when": "view == iiqXmlExplorer.structure",
+          "group": "navigation@2"
+        },
+        {
+          "command": "iiqXmlExplorer.toggleAttributes",
+          "when": "view == iiqXmlExplorer.structure",
+          "group": "navigation@3"
+        },
+        {
+          "command": "iiqXmlExplorer.refresh",
+          "when": "view == iiqXmlExplorer.structure",
+          "group": "navigation@4"
+        },
+        {
+          "command": "iiqXmlExplorer.moveToSideBar",
+          "when": "view == iiqXmlExplorer.structure",
+          "group": "9_layout@1"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "iiqXmlExplorer.showWorkflowDiagram",
+          "when": "view == iiqXmlExplorer.structure && viewItem == workflow",
+          "group": "inline"
+        },
+        {
+          "command": "iiqXmlExplorer.showWorkflowDiagram",
+          "when": "view == iiqXmlExplorer.structure && viewItem == workflow",
+          "group": "1_nav@0"
+        },
+        {
+          "command": "iiqXmlExplorer.goToReference",
+          "when": "view == iiqXmlExplorer.structure && viewItem == reference",
+          "group": "inline"
+        },
+        {
+          "command": "iiqXmlExplorer.goToReference",
+          "when": "view == iiqXmlExplorer.structure && viewItem == reference",
+          "group": "1_nav@1"
+        },
+        {
+          "command": "iiqXmlExplorer.selectNode",
+          "when": "view == iiqXmlExplorer.structure",
+          "group": "1_nav@2"
+        },
+        {
+          "command": "iiqXmlExplorer.copyPath",
+          "when": "view == iiqXmlExplorer.structure",
+          "group": "2_copy@1"
+        },
+        {
+          "command": "iiqXmlExplorer.copyValue",
+          "when": "view == iiqXmlExplorer.structure && viewItem != problems && viewItem != problem",
+          "group": "2_copy@0"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "iiqXmlExplorer.reveal",
+          "when": "false"
+        },
+        {
+          "command": "iiqXmlExplorer.goToReference",
+          "when": "false"
+        },
+        {
+          "command": "iiqXmlExplorer.copyPath",
+          "when": "false"
+        },
+        {
+          "command": "iiqXmlExplorer.selectNode",
+          "when": "false"
+        },
+        {
+          "command": "iiqXmlExplorer.copyValue",
+          "when": "false"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "iiqXmlExplorer.showWorkflowDiagram",
+          "when": "resourceLangId == xml && iiqXmlExplorer.isWorkflow && activeWebviewPanelId != 'iiqXmlExplorer.workflowDiagram'",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "IIQ XML Explorer",
+      "properties": {
+        "iiqXmlExplorer.followCursor": {
+          "type": "boolean",
+          "default": true,
+          "description": "Select the IIQ Structure node under the editor cursor."
+        },
+        "iiqXmlExplorer.showAttributes": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show a short preview of key attributes (see Preview Attributes) next to each tag."
+        },
+        "iiqXmlExplorer.showAttributeNodes": {
+          "type": "boolean",
+          "default": true,
+          "description": "List every attribute of a tag as a child node (name = value). <entry> tags are excluded since their key and value are shown inline."
+        },
+        "iiqXmlExplorer.previewAttributes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "name",
+            "key",
+            "type",
+            "action",
+            "value",
+            "to",
+            "when",
+            "class",
+            "connector"
+          ],
+          "description": "Attributes shown (in this order) in the preview next to a tag."
+        },
+        "iiqXmlExplorer.showTextNodes": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show text content of elements (e.g. <Description>, <String>) as child nodes."
+        },
+        "iiqXmlExplorer.onlyIiqFiles": {
+          "type": "boolean",
+          "default": false,
+          "description": "Only show the tree for files that look like IdentityIQ XML (sailpoint.dtd DOCTYPE, a <sailpoint> root or a known object root such as Rule or Workflow). When off, any XML file is shown."
+        },
+        "iiqXmlExplorer.provideOutline": {
+          "type": "boolean",
+          "default": true,
+          "description": "Provide Outline and breadcrumb symbols for IdentityIQ XML files."
+        },
+        "iiqXmlExplorer.provideHovers": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show a short IdentityIQ description when hovering a tag name in IdentityIQ XML files."
+        }
+      }
+    },
+    "keybindings": [
+      {
+        "command": "iiqXmlExplorer.showStructure",
+        "key": "ctrl+alt+x",
+        "mac": "cmd+alt+x"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "test": "npm run compile && node --test out/test/*.test.js",
+    "package": "vsce package --allow-missing-repository"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.2.0",
+    "typescript": "^5.4.0"
+  }
+}

@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE Workflow PUBLIC "sailpoint.dtd" "sailpoint.dtd">
+<Workflow explicitTransitions="true" name="Example - Access Request" type="LCMProvisioning">
+  <Description>Sample access request with manager approval, a retry loop and a provisioning subprocess.</Description>
+  <Variable input="true" name="identityName"/>
+  <Variable input="true" name="plan"/>
+  <Variable initializer="0" name="attempts"/>
+  <Variable name="approved"/>
+  <Step icon="Start" name="Start" posX="20" posY="110">
+    <Transition to="Validate Request"/>
+  </Step>
+  <Step action="rule:Example - Validate Request" name="Validate Request" posX="120" posY="110" resultVariable="valid">
+    <Arg name="plan" value="ref:plan"/>
+    <Transition to="Manager Approval" when="script:(valid != null &amp;&amp; valid.booleanValue() &amp;&amp; plan != null &amp;&amp; plan.getAccountRequests() != null &amp;&amp; !plan.getAccountRequests().isEmpty())"/>
+    <Transition to="Notify Rejected"/>
+  </Step>
+  <Step name="Manager Approval" posX="240" posY="110">
+    <Approval mode="serial" owner="script:identity.getManager().getName()" return="approved">
+      <Arg name="workItemDescription" value="Access request for $(identityName)"/>
+    </Approval>
+    <Transition to="Provision" when="ref:approved"/>
+    <Transition to="Retry Check"/>
+  </Step>
+  <Step name="Retry Check" posX="240" posY="220">
+    <Script>
+      <Source><![CDATA[
+attempts = attempts + 1;
+return attempts;
+]]></Source>
+    </Script>
+    <Transition to="Manager Approval" when="script:attempts &lt; 3"/>
+    <Transition to="Notify Rejected"/>
+  </Step>
+  <Step name="Provision" posX="360" posY="40">
+    <WorkflowRef>
+      <Reference class="sailpoint.object.Workflow" name="LCM Provisioning"/>
+    </WorkflowRef>
+    <Arg name="plan" value="ref:plan"/>
+    <Transition to="Notify Approved"/>
+  </Step>
+  <Step action="call:sendEmail" name="Notify Approved" posX="480" posY="40">
+    <Arg name="template" value="Access Approved"/>
+    <Transition to="Stop"/>
+  </Step>
+  <Step action="call:sendEmail" name="Notify Rejected" posX="480" posY="220">
+    <Arg name="template" value="Access Rejected"/>
+    <Transition to="Stop"/>
+  </Step>
+  <Step icon="Stop" name="Stop" posX="600" posY="110"/>
+</Workflow>

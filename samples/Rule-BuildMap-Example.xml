@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE Rule PUBLIC "sailpoint.dtd" "sailpoint.dtd">
+<Rule language="beanshell" name="Example - BuildMap Normalize" type="BuildMap">
+  <Description>Normalizes delimited-file columns before aggregation.</Description>
+  <Signature returnType="Map">
+    <Inputs>
+      <Argument name="log" type="org.apache.commons.logging.Log">
+        <Description>The log object associated with the SailPointContext.</Description>
+      </Argument>
+      <Argument name="context" type="sailpoint.api.SailPointContext">
+        <Description>A sailpoint.api.SailPointContext object that can be used to query the database if necessary.</Description>
+      </Argument>
+      <Argument name="cols">
+        <Description>Ordered list of the column names from the file.</Description>
+      </Argument>
+      <Argument name="record">
+        <Description>Ordered list of values for the current record.</Description>
+      </Argument>
+    </Inputs>
+    <Returns>
+      <Argument name="map">
+        <Description>Map of names/values representing the row.</Description>
+      </Argument>
+    </Returns>
+  </Signature>
+  <Source><![CDATA[
+import sailpoint.object.Identity;
+import sailpoint.connector.DelimitedFileConnector;
+
+Map map = DelimitedFileConnector.defaultBuildMap(cols, record);
+int x = 1, y = 3;
+if (x < 5 && y > 2) {
+  String email = (String) map.get("email");
+  if (email != null) {
+    map.put("email", email.trim().toLowerCase());
+  }
+}
+return map;
+]]></Source>
+</Rule>

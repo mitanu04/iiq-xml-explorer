@@ -1,0 +1,100 @@
+/* Workflow Diagram: uses VS Code theme variables so it matches any colour theme. */
+:root {
+  --bg: var(--vscode-editor-background);
+  --fg: var(--vscode-editor-foreground);
+  --muted: var(--vscode-descriptionForeground);
+  --line: var(--vscode-editorWidget-border, var(--vscode-panel-border, #8884));
+  --box: var(--vscode-editorWidget-background, var(--vscode-editor-background));
+  --focus: var(--vscode-focusBorder);
+  --edge: var(--vscode-editorLineNumber-foreground, #888);
+  --hot: var(--vscode-textLink-foreground, #3794ff);
+  --k-rule: var(--vscode-charts-blue, #3794ff);
+  --k-script: var(--vscode-charts-purple, #b180d7);
+  --k-call: var(--vscode-charts-yellow, #cca700);
+  --k-approval: var(--vscode-charts-orange, #d18616);
+  --k-subprocess: var(--vscode-charts-green, #89d185);
+  --k-step: var(--vscode-descriptionForeground, #999);
+  --k-start: var(--vscode-charts-green, #89d185);
+  --k-stop: var(--vscode-charts-red, #f14c4c);
+  --k-missing: var(--vscode-errorForeground, #f14c4c);
+}
+
+html, body { height: 100%; }
+body {
+  margin: 0; padding: 0; display: flex; flex-direction: column; overflow: hidden;
+  background: var(--bg); color: var(--fg);
+  font-family: var(--vscode-font-family); font-size: var(--vscode-font-size, 13px);
+}
+
+.bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  padding: 8px 12px; border-bottom: 1px solid var(--line);
+}
+.title { display: flex; align-items: baseline; gap: 10px; min-width: 0; flex-wrap: wrap; }
+.title strong { font-size: 1.05em; }
+.meta { color: var(--muted); font-size: 0.9em; }
+.tools { display: flex; align-items: center; gap: 6px; }
+.layout { color: var(--muted); display: flex; align-items: center; gap: 6px; margin-right: 6px; }
+select, button {
+  font: inherit; color: var(--vscode-button-secondaryForeground, var(--fg));
+  background: var(--vscode-button-secondaryBackground, var(--box));
+  border: 1px solid var(--line); border-radius: 4px; padding: 3px 9px; cursor: pointer;
+}
+select { color: var(--vscode-dropdown-foreground, var(--fg)); background: var(--vscode-dropdown-background, var(--box)); }
+button:hover { background: var(--vscode-button-secondaryHoverBackground, var(--box)); }
+button:focus-visible, select:focus-visible, .stage:focus-visible, .node:focus-visible { outline: 1px solid var(--focus); outline-offset: 1px; }
+
+.stage { position: relative; flex: 1; min-height: 0; cursor: grab; }
+.stage.dragging { cursor: grabbing; }
+.stage svg { width: 100%; height: 100%; display: block; user-select: none; }
+.empty { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); }
+/* `hidden` must win over display:grid, otherwise the invisible layer swallows every click. */
+[hidden] { display: none !important; }
+
+/* edges */
+.edge { cursor: pointer; }
+.edge .line { fill: none; stroke: var(--edge); stroke-width: 1.5; }
+.edge.conditional .line { stroke-dasharray: 6 4; }
+.edge .hit { fill: none; stroke: transparent; stroke-width: 12; }
+.edge.hot .line { stroke: var(--hot); stroke-width: 2.2; }
+.edge.dim, .label.dim { opacity: 0.25; }
+.arrowhead { fill: var(--edge); }
+.arrowhead.hot { fill: var(--hot); }
+
+.label { cursor: pointer; }
+.label rect { fill: var(--bg); stroke: var(--line); }
+.label text { font-family: var(--vscode-editor-font-family, monospace); font-size: 11px; fill: var(--fg); }
+.label.plain text { fill: var(--muted); }
+.label .order { font-weight: 700; fill: var(--hot); }
+.label.hot rect { stroke: var(--hot); }
+
+/* nodes */
+.node { cursor: pointer; }
+.node .box { fill: var(--box); stroke: var(--line); stroke-width: 1.2; }
+.node:hover .box { stroke: var(--hot); }
+.node.active .box { stroke: var(--focus); stroke-width: 2.6; }
+.node .stripe { fill: var(--kind); }
+.node .kind { font-size: 9.5px; letter-spacing: 0.08em; font-weight: 700; fill: var(--kind); }
+.node .name { font-size: 13px; font-weight: 600; fill: var(--fg); }
+.node .detail { font-family: var(--vscode-editor-font-family, monospace); font-size: 11px; fill: var(--muted); }
+.kind-rule { --kind: var(--k-rule); }
+.kind-script { --kind: var(--k-script); }
+.kind-call { --kind: var(--k-call); }
+.kind-approval { --kind: var(--k-approval); }
+.kind-subprocess { --kind: var(--k-subprocess); }
+.kind-step { --kind: var(--k-step); }
+.kind-start { --kind: var(--k-start); }
+.kind-stop { --kind: var(--k-stop); }
+.kind-missing { --kind: var(--k-missing); }
+.node.kind-start .box, .node.kind-stop .box { fill: color-mix(in srgb, var(--kind) 22%, var(--box)); stroke: var(--kind); }
+.node.kind-missing .box { stroke: var(--k-missing); stroke-dasharray: 5 4; }
+
+/* legend */
+.legend {
+  display: flex; flex-wrap: wrap; gap: 14px; align-items: center; padding: 6px 12px;
+  border-top: 1px solid var(--line); color: var(--muted); font-size: 0.88em;
+}
+.key { display: inline-flex; align-items: center; gap: 6px; }
+.key::before { content: ""; width: 10px; height: 10px; border-radius: 2px; background: var(--kind); }
+.key.cond::before { width: 18px; height: 0; border-top: 2px dashed var(--edge); border-radius: 0; background: none; }
+.warn { color: var(--vscode-editorWarning-foreground, #cca700); cursor: help; margin-left: auto; }
