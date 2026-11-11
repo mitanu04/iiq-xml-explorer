@@ -165,12 +165,12 @@
         },
         {
           "command": "iiqXmlExplorer.goToReference",
-          "when": "view == iiqXmlExplorer.structure && viewItem == reference",
+          "when": "view == iiqXmlExplorer.structure && (viewItem == reference || viewItem == attributeReference)",
           "group": "inline"
         },
         {
           "command": "iiqXmlExplorer.goToReference",
-          "when": "view == iiqXmlExplorer.structure && viewItem == reference",
+          "when": "view == iiqXmlExplorer.structure && (viewItem == reference || viewItem == attributeReference)",
           "group": "1_nav@1"
         },
         {

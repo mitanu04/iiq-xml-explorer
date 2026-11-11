@@ -1,11 +1,18 @@
 # Changelog
 
 ## 0.4.2
+- "Go to Referenced Object" is also offered on the tag around a reference (`BuildMapRule`, `Owner`, `AccountCorrelationConfig`, …),
+  on rule entries such as `<entry key="afterProvisioningRule" value="X"/>`, and on the attribute rows of a reference.
+  Ctrl+Click works on these tags too.
+- README: shorter Layout section, Commands table without shortcuts, removed the upgrade note for the old publisher id,
+  the project file listings and the roadmap.
 - GitHub Actions workflow: builds, tests and packages the extension on every push and pull request,
   uploads the .vsix as an artifact, and creates a GitHub Release for version tags (`v*`).
 - README: step-by-step local build guide (prerequisites, npm scripts, debugging with F5, releasing, troubleshooting)
   and a section on building with GitHub.
 - `npm run package` no longer stops to ask about the missing repository field.
+- Unit tests extended from 10 to 68: XML parser edge cases, IIQ file and reference detection,
+  workflow model edge cases, and the tree's labels, entry values and icons.
 
 ## 0.4.1
 - Ctrl+Alt+X is now **Show IIQ Structure**: it brings the view into sight and focuses it wherever it is. It no longer hides the right side bar, so tools there (such as Copilot Chat) are never hidden by surprise. Use Ctrl+Alt+B to hide or show the right side bar.

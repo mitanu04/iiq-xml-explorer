@@ -17,16 +17,14 @@ The extension is read-only and works offline. It runs side by side with the
 
 ## Install
 
-1. If you installed an early build published as **`mihai-dev.iiq-xml-explorer`**, uninstall it first:
-   `code --uninstall-extension mihai-dev.iiq-xml-explorer`
-2. Get the package: download it from the repository's **Releases** page, or
+1. Get the package: download it from the repository's **Releases** page, or
    [build it yourself](#build-locally).
-3. Install the package:
+2. Install the package:
    ```bash
    code --install-extension iiq-xml-explorer-0.4.2.vsix
    ```
    or in VS Code: *Extensions* → `…` → *Install from VSIX…*.
-4. Open an XML file. The extension starts on the first XML file you open.
+3. Open an XML file. The extension starts on the first XML file you open.
 
 Later versions install over this one and keep your layout and settings.
 
@@ -64,7 +62,7 @@ It shows the tag tree of the XML file in the active editor.
 | Item | What it does |
 |---|---|
 | Show Workflow Diagram | On a `Workflow` node: opens that workflow's flowchart |
-| Go to Referenced Object | On a reference: opens the referenced object's XML file (see [References](#references)) |
+| Go to Referenced Object | On anything that points to another object: a `Reference` node, the tag around it (`BuildMapRule`, `Owner`, `AccountCorrelationConfig`, …), a rule entry such as `afterProvisioningRule`, a step with `action="rule:…"`, or one of their attribute rows. Opens the referenced object's XML file (see [References](#references)) |
 | Select Whole Element | Selects the whole element (or attribute) in the editor |
 | Copy Value | Copies the attribute value, `value` attribute or text content |
 | Copy Path | Copies a path such as `Workflow[name=X]/Step[name=Y]/Arg[name=Z]` or `…/Application[name=GLOBEX]/@connector` |
@@ -100,9 +98,10 @@ Command Palette. In a `<sailpoint>` file with several workflows, the one under t
 
 These are recognised as references to other IdentityIQ objects:
 
-- `<Reference class="sailpoint.object.Rule" name="X"/>` (any class), including inside wrappers such as
-  `<RuleRef>`, `<BuildMapRule>`, `<Owner>` or `<RuleLibraries>`
+- `<Reference class="sailpoint.object.Rule" name="X"/>` (any class), and a tag that wraps a single one,
+  such as `<RuleRef>`, `<BuildMapRule>`, `<Owner>` or `<AccountCorrelationConfig>`
 - `action="rule:X"`, `value="rule:X"` and `ruleName="X"`
+- map entries whose key ends in `Rule` and that have a value, e.g. `<entry key="afterProvisioningRule" value="X"/>`
 
 Use the link button in the tree, **Go to Referenced Object**, or **Ctrl+Click / F12** in the editor to open the
 referenced object. It is looked up in the XML files of your workspace by type and `name`
@@ -123,38 +122,27 @@ are enabled only for files that look like IdentityIQ XML:
 
 ## Layout
 
-IIQ Structure starts in the **Explorer** and shares its height with your files, Outline and Timeline.
-Drag the divider above it, or collapse Outline and Timeline, to give it more room.
-
-For a **full-height** tree on the **right**, with your files still on the left:
-1. Run **IIQ XML: Move IIQ Structure to the Right Side Bar…** (Command Palette, or the `…` menu of the view).
-   The extension also offers this once, the first time it starts.
-2. Pick **New Secondary Side Bar Entry**. IIQ Structure becomes its own tab in the right side bar,
-   next to tools such as GitHub Copilot Chat; click the tab icons to switch.
-
-Other destinations in that list: **New Side Bar Entry** gives it its own icon on the left Activity Bar
-(it then replaces the Explorer while open), **New Panel Entry** puts it at the bottom next to the Terminal,
-and an existing area stacks it under what is already there.
-
-- **Ctrl+Alt+B** hides or shows the right side bar.
-- **Ctrl+Alt+X** (*Show IIQ Structure*) brings IIQ Structure into view and focuses it, wherever it is.
-- To move it back, right-click its header or tab and choose **Reset Location**.
+IIQ Structure starts in the **Explorer**, under your files. To give it more room:
+- **Bigger in the Explorer**: drag the divider above it, or collapse Outline and Timeline.
+- **Full height on the right**: run **IIQ XML: Move IIQ Structure to the Right Side Bar…** and pick
+  **New Secondary Side Bar Entry**. It becomes its own tab next to tools like Copilot Chat, and **Ctrl+Alt+B** hides or shows that side bar.
+- **Back to the start**: right-click its header or tab → **Reset Location**.
 
 VS Code remembers the position across restarts.
 
-## Commands and shortcuts
+## Commands
 
-| Command | Shortcut |
+Available from the Command Palette (**Ctrl+Shift+P**), all starting with `IIQ XML:`.
+
+| Command | What it does |
 |---|---|
-| IIQ XML: Show IIQ Structure | Ctrl+Alt+X (Cmd+Alt+X on macOS) |
-| IIQ XML: Show Workflow Diagram | |
-| IIQ XML: Show Tag Index | |
-| IIQ XML: Move IIQ Structure to the Right Side Bar… | |
-| IIQ XML: Toggle Follow Cursor | |
-| IIQ XML: Toggle Attribute Preview | |
-| IIQ XML: Refresh | |
-
-To change a shortcut: *File → Preferences → Keyboard Shortcuts*, search for `IIQ XML`.
+| IIQ XML: Show IIQ Structure | Brings the IIQ Structure view into sight and focuses it |
+| IIQ XML: Show Workflow Diagram | Opens the flowchart of the workflow in the active file |
+| IIQ XML: Show Tag Index | Lists every distinct tag, then every occurrence of the one you pick |
+| IIQ XML: Move IIQ Structure to the Right Side Bar… | Moves the view to another area (see [Layout](#layout)) |
+| IIQ XML: Toggle Follow Cursor | Turns cursor following in the tree on or off |
+| IIQ XML: Toggle Attribute Preview | Turns the attribute preview next to tags on or off |
+| IIQ XML: Refresh | Re-reads the active file |
 
 ## Settings
 
@@ -218,7 +206,7 @@ then run **Developer: Reload Window** in VS Code.
 | `npm install` | Downloads the dependencies into `node_modules/` |
 | `npm run compile` | Compiles `src/` (TypeScript) into `out/` (JavaScript) |
 | `npm run watch` | Same, and recompiles on every save |
-| `npm test` | Compiles, then runs the unit tests for the XML parser and the workflow model |
+| `npm test` | Compiles, then runs the unit tests (XML parser, IIQ reference detection, workflow model, tree labels and icons) |
 | `npm run package` | Compiles and creates `iiq-xml-explorer-<version>.vsix` |
 
 ### Run and debug without installing
@@ -272,40 +260,6 @@ git push origin main v0.4.3
 The tag must match the `version` in `package.json`; otherwise the build stops with an error saying which version to use.
 If the release step fails with a permissions error, open the repository's *Settings → Actions → General* and set
 *Workflow permissions* to **Read and write permissions**.
-
-## Project files
-
-### Samples
-
-| File | Shows |
-|---|---|
-| `samples/Rule-BuildMap-Example.xml` | A BuildMap rule with signature and BeanShell source |
-| `samples/Application-Example.xml` | A `<sailpoint>` import file: a DelimitedFile application (entries, schema, owner, remediators, correlation config) and a correlation rule |
-| `samples/Workflow-Joiner-Example.xml` | A small workflow with a rule step, a script step and a conditional transition |
-| `samples/Workflow-Access-Request-Example.xml` | A workflow with an approval, a retry loop, a subprocess and a long condition |
-
-### Project layout
-
-| Path | What it does |
-|---|---|
-| `src/parser/xmlParser.ts` | Tolerant XML parser that keeps source offsets (no VS Code dependency, unit-tested) |
-| `src/iiq/knowledge.ts` | IIQ object types, tag descriptions, reference detection |
-| `src/documentCache.ts` | Parses each document once per version, shared by all features |
-| `src/structureTree.ts` | The IIQ Structure tree view |
-| `src/presentation.ts` | Labels, descriptions, icons and tooltips for tree nodes |
-| `src/providers.ts` | Outline, hover and go-to-definition providers |
-| `src/workflow/workflowModel.ts` | Turns a `<Workflow>` into steps and transitions (unit-tested) |
-| `src/workflow/workflowPanel.ts` | The Workflow Diagram webview panel |
-| `media/workflow.js`, `media/workflow.css` | Layout and SVG drawing of the diagram, using the VS Code theme colours |
-| `src/extension.ts` | Activation, commands, editor ↔ tree ↔ diagram sync |
-| `src/test/` | Unit tests |
-| `.github/workflows/build.yml` | GitHub Actions build, artifact and release |
-
-## Roadmap
-
-- Parse `sailpoint.dtd` from the IIQ install to show all *allowed* child tags and attributes per object.
-- Autocomplete and validation of tags and attributes from the DTD.
-- Workspace-wide object index: find all references to a Rule.
 
 ## Author
 

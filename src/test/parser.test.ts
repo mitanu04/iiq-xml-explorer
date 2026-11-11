@@ -59,3 +59,25 @@ test('decodes entities in attributes', () => {
   const model = parseXml('<Transition to="End" when="x &lt; 3 &amp;&amp; y"/>');
   assert.equal(getAttr(model.root!, 'when'), 'x < 3 && y');
 });
+
+test('navigable references: wrappers, rule entries, not icons', async () => {
+  const { getNavigableReference } = await import('../iiq/knowledge');
+  const xml = `<Application name="A">
+    <BuildMapRule><Reference class="sailpoint.object.Rule" name="BM"/></BuildMapRule>
+    <Owner><Reference class="sailpoint.object.Identity" name="spadmin"/></Owner>
+    <Attributes><Map>
+      <entry key="afterProvisioningRule" value="After Rule"/>
+      <entry key="afterProvisioningRule"/>
+      <entry key="delimiter" value=","/>
+    </Map></Attributes>
+  </Application>`;
+  const root = parseXml(xml).root!;
+  const el = (n: string) => root.children.find(c => c.name === n)!;
+  assert.deepEqual(getNavigableReference(el('BuildMapRule')), { type: 'Rule', name: 'BM' });
+  assert.deepEqual(getNavigableReference(el('Owner')), { type: 'Identity', name: 'spadmin' });
+  assert.equal(getReference(el('BuildMapRule')), undefined, 'wrapper icon logic must stay unchanged');
+  const entries = el('Attributes').children.find(c => c.name === 'Map')!.children.filter(c => c.name === 'entry');
+  assert.deepEqual(getNavigableReference(entries[0]), { type: 'Rule', name: 'After Rule' });
+  assert.equal(getNavigableReference(entries[1]), undefined);
+  assert.equal(getNavigableReference(entries[2]), undefined);
+});

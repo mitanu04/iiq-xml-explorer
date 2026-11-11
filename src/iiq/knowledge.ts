@@ -155,6 +155,31 @@ export function getReference(node: XmlNode): IiqReference | undefined {
   return undefined;
 }
 
+/**
+ * Like getReference, but also for the nodes a person naturally right-clicks:
+ *   - a wrapper whose only child element is a <Reference> (<BuildMapRule>, <Owner>, <AccountCorrelationConfig>...)
+ *   - a map entry naming a rule: <entry key="afterProvisioningRule" value="My Rule"/>
+ * Kept separate from getReference so icons of wrappers are not changed.
+ */
+export function getNavigableReference(node: XmlNode): IiqReference | undefined {
+  const direct = getReference(node);
+  if (direct || node.kind !== 'element') { return direct; }
+
+  const childElements = node.children.filter(c => c.kind === 'element');
+  if (childElements.length === 1 && childElements[0].name === 'Reference') {
+    return getReference(childElements[0]);
+  }
+
+  if (node.name === 'entry') {
+    const key = getAttr(node, 'key') ?? '';
+    const value = (getAttr(node, 'value') ?? '').trim();
+    if (/Rule$/.test(key) && value && !value.includes('$(')) {
+      return { type: 'Rule', name: value };
+    }
+  }
+  return undefined;
+}
+
 /** Tags whose CDATA/text content is code. */
 export function isCodeContainer(tag: string | undefined): boolean {
   return tag === 'Source' || tag === 'Script';
