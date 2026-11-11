@@ -1,3 +1,9 @@
 node_modules/
 out/
 *.vsix
+
+# Yarn (optional). package-lock.json is the lockfile kept in Git; a local yarn.lock is not committed.
+yarn.lock
+yarn-error.log
+.yarn/
+.pnp.*
