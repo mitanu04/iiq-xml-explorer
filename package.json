@@ -2,7 +2,7 @@
   "name": "iiq-xml-explorer",
   "displayName": "IIQ XML Explorer",
   "description": "SailPoint IdentityIQ XML explorer by Mergea Sergiu-Octavian: tag tree with all attributes and entry values, BeanShell sources, references, outline, hovers and workflow flowcharts.",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "publisher": "mergea-sergiu-octavian",
   "author": {
     "name": "Mergea Sergiu-Octavian"

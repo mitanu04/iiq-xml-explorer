@@ -21,7 +21,7 @@ The extension is read-only and works offline. It runs side by side with the
    [build it yourself](#build-locally).
 2. Install the package:
    ```bash
-   code --install-extension iiq-xml-explorer-0.4.2.vsix
+   code --install-extension iiq-xml-explorer-0.4.3.vsix
    ```
    or in VS Code: *Extensions* → `…` → *Install from VSIX…*.
 3. Open an XML file. The extension starts on the first XML file you open.

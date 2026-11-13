@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.2
+## 0.4.3
 - Application view: a new panel for an `<Application>` with a **Schema** tab (the schemas as sortable, filterable tables:
   type, identity/display attribute, entitlement, managed, multi-valued, minable, correlation key, required, description)
   and an **Overview** tab (rules, identities and other objects the application references, where they are defined,
@@ -9,6 +9,10 @@
   **Files of this application** list (own file, defining files, mentioning files) with *Copy paths* and *Copy as checklist*,
   to track an application in a branch.
   Open it from the tree toolbar, the editor title, the right-click menu on `Application` / `Schema`, or the Command Palette.
+- `npm test` / `yarn test` now also work on Windows with Node 20 (the test files are listed by `scripts/run-tests.js`
+  instead of a `*.test.js` pattern that cmd.exe and Node 20 do not expand).
+
+## 0.4.2
 - "Go to Referenced Object" is also offered on the tag around a reference (`BuildMapRule`, `Owner`, `AccountCorrelationConfig`, …),
   on rule entries such as `<entry key="afterProvisioningRule" value="X"/>`, and on the attribute rows of a reference.
   Ctrl+Click works on these tags too.
@@ -22,8 +26,6 @@
 - Build with npm or Yarn: scripts no longer call npm internally, Yarn files are ignored by Git, and the README
   shows every build step for both.
 - README: new "Create a new release" section with the full branch → pull request → tag procedure.
-- `npm test` / `yarn test` now also work on Windows with Node 20 (the test files are listed by `scripts/run-tests.js`
-  instead of a `*.test.js` pattern that cmd.exe and Node 20 do not expand).
 - Unit tests extended from 10 to 68: XML parser edge cases, IIQ file and reference detection,
   workflow model edge cases, and the tree's labels, entry values and icons.
 
