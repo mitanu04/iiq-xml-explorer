@@ -141,7 +141,9 @@ export class StructureTreeProvider implements vscode.TreeDataProvider<TreeEntry>
     item.iconPath = iconFor(entry);
     item.tooltip = tooltipFor(entry, doc);
     item.contextValue = getNavigableReference(entry) ? 'reference'
-      : (entry.kind === 'element' && entry.name === 'Workflow') ? 'workflow' : entry.kind;
+      : (entry.kind === 'element' && entry.name === 'Workflow') ? 'workflow'
+      : (entry.kind === 'element' && entry.name === 'Application') ? 'application'
+      : (entry.kind === 'element' && entry.name === 'Schema') ? 'schema' : entry.kind;
     item.command = { command: 'iiqXmlExplorer.reveal', title: 'Reveal', arguments: [entry] };
     return item;
   }

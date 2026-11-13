@@ -51,6 +51,7 @@ It shows the tag tree of the XML file in the active editor.
 | Button | What it does |
 |---|---|
 | Show Workflow Diagram | Opens the flowchart (only when the file contains a `<Workflow>`) |
+| Show Application Overview | Opens the Application view (only when the file contains an `<Application>`) |
 | Show Tag Index | Lists every distinct tag with its count, then every occurrence of the tag you pick |
 | Toggle Follow Cursor | Turns cursor following on or off (saved in your user settings) |
 | Toggle Attribute Preview | Turns the attribute preview next to tags on or off (saved in your user settings) |
@@ -62,6 +63,7 @@ It shows the tag tree of the XML file in the active editor.
 | Item | What it does |
 |---|---|
 | Show Workflow Diagram | On a `Workflow` node: opens that workflow's flowchart |
+| Show Application Overview / Show Application Schema Table | On an `Application` node (and the schema table also on a `Schema` node): opens the [Application view](#application-view) |
 | Go to Referenced Object | On anything that points to another object: a `Reference` node, the tag around it (`BuildMapRule`, `Owner`, `AccountCorrelationConfig`, …), a rule entry such as `afterProvisioningRule`, a step with `action="rule:…"`, or one of their attribute rows. Opens the referenced object's XML file (see [References](#references)) |
 | Select Whole Element | Selects the whole element (or attribute) in the editor |
 | Copy Value | Copies the attribute value, `value` attribute or text content |
@@ -93,6 +95,43 @@ Command Palette. In a `<sailpoint>` file with several workflows, the one under t
   steps no transition leads to, and duplicate step names.
 - **Navigation**: scroll to zoom, drag to pan, **Fit** to see everything. Large workflows open at a readable zoom
   starting from the Start step. With the diagram focused: `+` / `-` zoom, `0` or `F` fit, arrow keys pan, `Enter` opens the focused step.
+
+## Application view
+
+For an `<Application>` the extension opens a second panel with two tabs, in the same colours as your VS Code theme.
+Open it with the button in the IIQ Structure toolbar or in the editor title, by right-clicking the `Application`
+node, or with **IIQ XML: Show Application Overview** / **IIQ XML: Show Application Schema Table**.
+If the file holds several applications, the one under the cursor is shown.
+
+**Schema** – the schemas of the application as tables, like the Schemas tab in IdentityIQ:
+- One button per schema (`account`, `group`, …) with its object type, native object type and the identity, display,
+  instance and group attributes.
+- One row per `AttributeDefinition` with Name, Type, Identity, Display, Entitlement, Managed, Multi-valued, Minable,
+  Correlation key, Required and Description (from the `description` attribute or the `<Description>` child).
+- Filter box, sorting by clicking a column header, and a click on an attribute name jumps to it in the XML.
+
+**Overview** – everything the application is connected to:
+- **Rules used**: connector rules, `afterProvisioningRule`-style entries, `rule:` actions and rule references, with the
+  rule type and the file the rule is defined in. Rules that are not in the workspace are marked.
+- **Identities and workgroups**: owner, revokers and any other identity reference.
+- **Other referenced objects**: correlation configs, forms, workflows and so on.
+- **Used as** shows where each reference sits (`BuildMapRule`, `Owner`, an entry key…); click it to jump there in the XML.
+- **Indirect dependencies**: objects the application needs through the ones above, for example the rule libraries of a
+  rule (`ReferencedRules`) or the rules of a correlation config, followed level by level (up to 8) for every object that
+  is defined in the workspace. Identities and workgroups are not followed.
+- **Mentioned in**: every line in the workspace that contains the application's name, in `.xml`, `.md`, `.markdown`
+  and `.txt` files, grouped by file with the object (XML) or heading (documentation) it sits in. Lines where the name
+  stands alone between quotes or tags come first. Filter by *XML* or *Documentation*, click a line to open it.
+
+**Files of this application** (end of the Overview tab) lists every file that belongs to the application: its own file,
+the files that define what it references (directly or indirectly) and the files that mention it, each with the reason.
+**Copy paths** puts one workspace-relative path per line on the clipboard (for `git`, scripts or a review), and
+**Copy as checklist** copies a Markdown checklist with the reasons. Use it to see what to take along when you track an
+application in a branch.
+
+The whole workspace is searched when the panel opens and when you press **Refresh**, using unsaved editor changes too
+(folders such as `node_modules`, `out`, `.git`, `target`, `build` and `dist` are skipped). Names are matched exactly,
+including upper and lower case, and only as whole words.
 
 ## References
 
@@ -138,6 +177,8 @@ Available from the Command Palette (**Ctrl+Shift+P**), all starting with `IIQ XM
 |---|---|
 | IIQ XML: Show IIQ Structure | Brings the IIQ Structure view into sight and focuses it |
 | IIQ XML: Show Workflow Diagram | Opens the flowchart of the workflow in the active file |
+| IIQ XML: Show Application Overview | Opens the references and mentions of the application in the active file |
+| IIQ XML: Show Application Schema Table | Opens the schemas of the application as tables |
 | IIQ XML: Show Tag Index | Lists every distinct tag, then every occurrence of the one you pick |
 | IIQ XML: Move IIQ Structure to the Right Side Bar… | Moves the view to another area (see [Layout](#layout)) |
 | IIQ XML: Toggle Follow Cursor | Turns cursor following in the tree on or off |
@@ -165,6 +206,8 @@ Available from the Command Palette (**Ctrl+Shift+P**), all starting with `IIQ XM
   `Reference` elements with class `Identity`; values like `owner="ref:manager"` are shown as plain attributes.
 - References are resolved only against XML files in the open workspace, not against a live IIQ server.
 - The workflow diagram does not follow subprocesses into other files.
+- The Application view searches the workspace folder only, matches the name as written (case-sensitive), and does not read
+  `.docx` or other binary documents. It lists at most 500 mentions.
 
 ## Build locally
 

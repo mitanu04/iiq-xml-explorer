@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE sailpoint PUBLIC "sailpoint.dtd" "sailpoint.dtd">
+<sailpoint>
+  <Application connector="sailpoint.connector.LDAPConnector" featuresString="PROVISIONING, PASSWORD, SEARCH, ENABLE" name="Corp Active Directory" type="Active Directory - Direct">
+    <AccountCorrelationConfig>
+      <Reference class="sailpoint.object.CorrelationConfig" name="Corp AD Correlation"/>
+    </AccountCorrelationConfig>
+    <Attributes>
+      <Map>
+        <entry key="afterProvisioningRule" value="Example - AD After Provisioning"/>
+        <entry key="authorizationType" value="simple"/>
+        <entry key="customizationRule">
+          <value>
+            <Reference class="sailpoint.object.Rule" name="Example - AD Customization"/>
+          </value>
+        </entry>
+        <entry key="searchDNs">
+          <value>
+            <List>
+              <Map>
+                <entry key="iterateSearchFilter" value="(objectClass=user)"/>
+                <entry key="searchDN" value="OU=Users,DC=corp,DC=example"/>
+              </Map>
+            </List>
+          </value>
+        </entry>
+      </Map>
+    </Attributes>
+    <ManagerCorrelationRule>
+      <Reference class="sailpoint.object.Rule" name="Example - AD Manager Correlation"/>
+    </ManagerCorrelationRule>
+    <Owner>
+      <Reference class="sailpoint.object.Identity" name="spadmin"/>
+    </Owner>
+    <Schemas>
+      <Schema displayAttribute="sAMAccountName" groupAttribute="memberOf" identityAttribute="distinguishedName" instanceAttribute="" nativeObjectType="user" objectType="account">
+        <AttributeDefinition name="distinguishedName" type="string">
+          <Description>Unique LDAP path of the account</Description>
+        </AttributeDefinition>
+        <AttributeDefinition name="sAMAccountName" type="string" correlationKey="1">
+          <Description>Pre-Windows 2000 logon name</Description>
+        </AttributeDefinition>
+        <AttributeDefinition name="mail" type="string"/>
+        <AttributeDefinition entitlement="true" managed="true" multi="true" name="memberOf" type="string" minable="true">
+          <Description>Groups the account belongs to</Description>
+        </AttributeDefinition>
+        <AttributeDefinition name="userAccountControl" type="int"/>
+      </Schema>
+      <Schema displayAttribute="cn" identityAttribute="distinguishedName" nativeObjectType="group" objectType="group">
+        <AttributeDefinition name="distinguishedName" type="string"/>
+        <AttributeDefinition name="cn" type="string"/>
+        <AttributeDefinition multi="true" name="member" type="string"/>
+      </Schema>
+    </Schemas>
+  </Application>
+  <Rule language="beanshell" name="Example - AD Customization" type="ResourceObjectCustomization">
+    <Source><![CDATA[
+return resourceObject;
+]]></Source>
+  </Rule>
+</sailpoint>

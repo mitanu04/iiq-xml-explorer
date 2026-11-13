@@ -86,7 +86,7 @@ export const TAG_DOCS: Record<string, string> = {
 };
 
 /** Element names that hold a reference to another object, mapped to the object class. */
-const REF_TAG_CLASS: Record<string, string> = {
+export const REF_TAG_CLASS: Record<string, string> = {
   RuleRef: 'Rule',
   WorkflowRef: 'Workflow',
   ApplicationRef: 'Application',
