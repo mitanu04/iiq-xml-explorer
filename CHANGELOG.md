@@ -11,6 +11,8 @@
   Open it from the tree toolbar, the editor title, the right-click menu on `Application` / `Schema`, or the Command Palette.
 - `npm test` / `yarn test` now also work on Windows with Node 20 (the test files are listed by `scripts/run-tests.js`
   instead of a `*.test.js` pattern that cmd.exe and Node 20 do not expand).
+- GitHub workflow: builds with Node.js 24 (was 20) and uses the Node 24 versions of the GitHub actions
+  (`checkout`, `setup-node`, `upload-artifact`, `download-artifact` v5), which removes the Node 20 deprecation warning.
 
 ## 0.4.2
 - "Go to Referenced Object" is also offered on the tag around a reference (`BuildMapRule`, `Owner`, `AccountCorrelationConfig`, …),

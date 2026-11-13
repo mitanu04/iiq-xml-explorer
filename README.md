@@ -288,7 +288,7 @@ then run **Developer: Reload Window** in VS Code.
 
 ## Build on GitHub
 
-The workflow in `.github/workflows/build.yml` builds the extension on GitHub, so you don't need Node.js locally.
+The workflow in `.github/workflows/build.yml` builds the extension on GitHub with Node.js 24, so you don't need Node.js locally.
 
 | When | What happens |
 |---|---|
