@@ -107,6 +107,18 @@
         "icon": "$(type-hierarchy)"
       },
       {
+        "command": "iiqXmlExplorer.showApplication",
+        "title": "Show Application Overview",
+        "category": "IIQ XML",
+        "icon": "$(server-environment)"
+      },
+      {
+        "command": "iiqXmlExplorer.showApplicationSchema",
+        "title": "Show Application Schema Table",
+        "category": "IIQ XML",
+        "icon": "$(table)"
+      },
+      {
         "command": "iiqXmlExplorer.moveToSideBar",
         "title": "Move IIQ Structure to the Right Side Bar…",
         "category": "IIQ XML",
@@ -124,6 +136,11 @@
         {
           "command": "iiqXmlExplorer.showWorkflowDiagram",
           "when": "view == iiqXmlExplorer.structure && iiqXmlExplorer.isWorkflow",
+          "group": "navigation@0"
+        },
+        {
+          "command": "iiqXmlExplorer.showApplication",
+          "when": "view == iiqXmlExplorer.structure && iiqXmlExplorer.isApplication",
           "group": "navigation@0"
         },
         {
@@ -153,6 +170,31 @@
         }
       ],
       "view/item/context": [
+        {
+          "command": "iiqXmlExplorer.showApplication",
+          "when": "view == iiqXmlExplorer.structure && viewItem == application",
+          "group": "inline"
+        },
+        {
+          "command": "iiqXmlExplorer.showApplicationSchema",
+          "when": "view == iiqXmlExplorer.structure && viewItem == application",
+          "group": "inline"
+        },
+        {
+          "command": "iiqXmlExplorer.showApplication",
+          "when": "view == iiqXmlExplorer.structure && viewItem == application",
+          "group": "1_nav@0"
+        },
+        {
+          "command": "iiqXmlExplorer.showApplicationSchema",
+          "when": "view == iiqXmlExplorer.structure && (viewItem == application || viewItem == schema)",
+          "group": "1_nav@1"
+        },
+        {
+          "command": "iiqXmlExplorer.showApplicationSchema",
+          "when": "view == iiqXmlExplorer.structure && viewItem == schema",
+          "group": "inline"
+        },
         {
           "command": "iiqXmlExplorer.showWorkflowDiagram",
           "when": "view == iiqXmlExplorer.structure && viewItem == workflow",
@@ -215,6 +257,11 @@
         {
           "command": "iiqXmlExplorer.showWorkflowDiagram",
           "when": "resourceLangId == xml && iiqXmlExplorer.isWorkflow && activeWebviewPanelId != 'iiqXmlExplorer.workflowDiagram'",
+          "group": "navigation"
+        },
+        {
+          "command": "iiqXmlExplorer.showApplication",
+          "when": "resourceLangId == xml && iiqXmlExplorer.isApplication && activeWebviewPanelId != 'iiqXmlExplorer.application'",
           "group": "navigation"
         }
       ]
@@ -289,7 +336,7 @@
     "vscode:prepublish": "tsc -p ./",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "test": "tsc -p ./ && node --test out/test/*.test.js",
+    "test": "tsc -p ./ && node scripts/run-tests.js",
     "package": "vsce package --allow-missing-repository"
   },
   "devDependencies": {

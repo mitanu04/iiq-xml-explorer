@@ -1,0 +1,86 @@
+/* Application view: uses VS Code theme variables so it matches any colour theme. */
+:root {
+  --bg: var(--vscode-editor-background);
+  --fg: var(--vscode-editor-foreground);
+  --muted: var(--vscode-descriptionForeground);
+  --line: var(--vscode-editorWidget-border, var(--vscode-panel-border, #8884));
+  --box: var(--vscode-editorWidget-background, var(--vscode-editor-background));
+  --hover: var(--vscode-list-hoverBackground, #8882);
+  --link: var(--vscode-textLink-foreground, #3794ff);
+  --warn: var(--vscode-editorWarning-foreground, #cca700);
+  --ok: var(--vscode-charts-green, #89d185);
+  --mark: var(--vscode-editor-findMatchHighlightBackground, #ea5c0055);
+}
+html, body { height: 100%; }
+body {
+  margin: 0; display: flex; flex-direction: column; overflow: hidden;
+  background: var(--bg); color: var(--fg);
+  font-family: var(--vscode-font-family); font-size: var(--vscode-font-size, 13px);
+}
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 8px 14px; border-bottom: 1px solid var(--line); }
+.title { display: flex; align-items: baseline; gap: 10px; min-width: 0; flex-wrap: wrap; }
+.title strong { font-size: 1.1em; }
+.meta { color: var(--muted); font-size: 0.9em; }
+button { font: inherit; }
+.tools button, .chip {
+  color: var(--vscode-button-secondaryForeground, var(--fg));
+  background: var(--vscode-button-secondaryBackground, var(--box));
+  border: 1px solid var(--line); border-radius: 3px; padding: 3px 10px; cursor: pointer;
+}
+.tools button:hover, .chip:hover { background: var(--vscode-button-secondaryHoverBackground, var(--hover)); }
+.tabs { display: flex; gap: 2px; padding: 0 10px; border-bottom: 1px solid var(--line); }
+.tabs button { background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); padding: 8px 12px; cursor: pointer; }
+.tabs button.on { color: var(--fg); border-bottom-color: var(--vscode-focusBorder, var(--link)); }
+.tabs button:hover { color: var(--fg); }
+button:focus-visible, th:focus-visible, input:focus-visible { outline: 1px solid var(--vscode-focusBorder); outline-offset: 1px; }
+main { flex: 1; overflow: auto; padding: 14px; }
+h2 { font-size: 1.05em; margin: 22px 0 8px; }
+section:first-of-type h2 { margin-top: 14px; }
+.muted { color: var(--muted); }
+.small { font-size: 0.9em; }
+button.link { white-space: nowrap; background: none; border: none; padding: 0; color: var(--link); cursor: pointer; text-align: left; }
+button.link:hover { text-decoration: underline; }
+
+.cards { display: flex; flex-wrap: wrap; gap: 10px; }
+.card { min-width: 92px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 4px; background: var(--box); }
+.card-value { font-size: 1.6em; font-weight: 600; line-height: 1.2; }
+.card-label { color: var(--muted); font-size: 0.9em; }
+
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; }
+th, td { text-align: left; padding: 5px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; white-space: nowrap; }
+tbody tr:hover { background: var(--hover); }
+td.uses button.link { margin-right: 6px; }
+td.status { font-size: 0.95em; }
+
+.badge { display: inline-block; font-size: 0.8em; padding: 0 6px; border-radius: 8px; border: 1px solid var(--line); margin-left: 4px; }
+.badge.warn { color: var(--warn); border-color: var(--warn); }
+.badge.muted { color: var(--muted); }
+.badge.xml { color: var(--link); border-color: var(--link); margin-left: 0; }
+.badge.doc { color: var(--ok); border-color: var(--ok); margin-left: 0; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 10px; }
+.chip.on { background: var(--vscode-button-background, var(--link)); color: var(--vscode-button-foreground, #fff); border-color: transparent; }
+
+details.file { margin: 4px 0; border: 1px solid var(--line); border-radius: 4px; }
+details.file summary { padding: 5px 10px; cursor: pointer; }
+.mention { display: flex; align-items: baseline; gap: 10px; padding: 3px 10px 3px 24px; border-top: 1px solid var(--line); min-width: 0; }
+.mention .container { color: var(--muted); white-space: nowrap; }
+.mention .preview { font-family: var(--vscode-editor-font-family, monospace); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+mark { background: var(--mark); color: inherit; border-radius: 2px; }
+
+.meta-grid { display: grid; grid-template-columns: max-content 1fr; gap: 2px 14px; margin: 6px 0 12px; }
+.meta-grid dt { color: var(--muted); }
+.meta-grid dd { margin: 0; }
+.filterbar { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+input[type="search"] {
+  font: inherit; color: var(--vscode-input-foreground, var(--fg)); background: var(--vscode-input-background, var(--box));
+  border: 1px solid var(--vscode-input-border, var(--line)); border-radius: 3px; padding: 3px 8px; min-width: 220px;
+}
+.schema-table th { cursor: pointer; user-select: none; }
+.schema-table th.asc::after { content: ' ▲'; font-size: 0.8em; }
+.schema-table th.desc::after { content: ' ▼'; font-size: 0.8em; }
+.schema-table .flag { text-align: center; padding-left: 6px; padding-right: 6px; }
+.schema-table td.flag { color: var(--ok); }
+.schema-table td.desc { min-width: 220px; }

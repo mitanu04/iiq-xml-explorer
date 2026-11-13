@@ -6,6 +6,8 @@ import { XmlNode, nodePath, walk, getAttr } from './parser/xmlParser';
 import { getNavigableReference } from './iiq/knowledge';
 import { WorkflowPanel } from './workflow/workflowPanel';
 import { findWorkflows } from './workflow/workflowModel';
+import { ApplicationPanel, ApplicationTab } from './application/applicationPanel';
+import { findApplications } from './application/applicationModel';
 
 const XML_SELECTOR: vscode.DocumentSelector = [
   { language: 'xml', scheme: 'file' },
@@ -32,6 +34,8 @@ export function activate(context: vscode.ExtensionContext): void {
     // Shows the diagram button in the tree toolbar and editor title only for workflow files.
     const hasWorkflow = !!tree.currentModel && findWorkflows(tree.currentModel).length > 0;
     vscode.commands.executeCommand('setContext', 'iiqXmlExplorer.isWorkflow', hasWorkflow);
+    const hasApplication = !!tree.currentModel && findApplications(tree.currentModel).length > 0;
+    vscode.commands.executeCommand('setContext', 'iiqXmlExplorer.isApplication', hasApplication);
   };
 
   const showFor = (editor: vscode.TextEditor | undefined) => {
@@ -136,6 +140,31 @@ export function activate(context: vscode.ExtensionContext): void {
       }
       WorkflowPanel.show(context, cache, document, offset);
     }),
+
+    // Application overview / schema table. From the tree: the Application or Schema node that was clicked.
+    // From the editor title or the Command Palette: the application under the cursor in the active file.
+    ...(['overview', 'schema'] as ApplicationTab[]).map(tab => vscode.commands.registerCommand(
+      tab === 'overview' ? 'iiqXmlExplorer.showApplication' : 'iiqXmlExplorer.showApplicationSchema',
+      async (arg?: TreeEntry | vscode.Uri) => {
+        let document: vscode.TextDocument | undefined;
+        let offset: number | undefined;
+        if (arg instanceof vscode.Uri) {
+          document = await vscode.workspace.openTextDocument(arg);
+        } else if (arg && isXmlNode(arg) && tree.currentDocument) {
+          document = tree.currentDocument;
+          offset = arg.start;
+        } else {
+          const editor = vscode.window.activeTextEditor;
+          document = editor && isXmlDocument(editor.document) ? editor.document : tree.currentDocument;
+          if (editor && document === editor.document) { offset = document.offsetAt(editor.selection.active); }
+        }
+        if (!document) {
+          vscode.window.showInformationMessage('Open an Application XML file first.');
+          return;
+        }
+        ApplicationPanel.show(context, cache, document, tab, offset);
+      }
+    )),
 
     // Focus the view, then let VS Code ask where to move it (e.g. the Secondary Side Bar on the right).
     vscode.commands.registerCommand('iiqXmlExplorer.moveToSideBar', async () => {
